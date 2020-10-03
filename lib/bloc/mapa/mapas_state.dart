@@ -1,6 +1,15 @@
 part of 'mapas_bloc.dart';
 
 @immutable
-abstract class MapasState {}
+class MapasState {
+  final bool mapaListo;
 
-class MapasInitial extends MapasState {}
+  MapasState({
+    this.mapaListo = false,
+  });
+
+  MapasState copyWith({
+    bool mapaListo
+  }) => MapasState(mapaListo: mapaListo ?? this.mapaListo);
+
+}
