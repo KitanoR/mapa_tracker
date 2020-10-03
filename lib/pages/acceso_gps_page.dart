@@ -9,6 +9,7 @@ class AccesoPage extends StatefulWidget {
 }
 
 class _AccesoPageState extends State<AccesoPage>  with WidgetsBindingObserver {
+  bool popup = false;
 
   @override
   void initState() {
@@ -25,7 +26,7 @@ class _AccesoPageState extends State<AccesoPage>  with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     // super.didChangeAppLifecycleState(state);
-    if(state == AppLifecycleState.resumed){
+    if(state == AppLifecycleState.resumed && !popup){
       if(await Permission.location.isGranted){
         Navigator.pushReplacementNamed(context, 'loading');
       }
@@ -47,9 +48,10 @@ class _AccesoPageState extends State<AccesoPage>  with WidgetsBindingObserver {
               shape: StadiumBorder(),
               splashColor: Colors.transparent,
               onPressed: () async {
+                popup = true;
                 final status = await Permission.location.request();
-                print(status);
-                this.accesoGPS(status);
+                await this.accesoGPS(status);
+                popup = false;
               },
             )
           ],
@@ -58,10 +60,10 @@ class _AccesoPageState extends State<AccesoPage>  with WidgetsBindingObserver {
    );
   }
 
-  void accesoGPS(PermissionStatus status) {
+  Future accesoGPS(PermissionStatus status) async {
     switch (status) {
       case PermissionStatus.granted:
-        Navigator.pushReplacementNamed(context, 'mapa');
+        await Navigator.pushReplacementNamed(context, 'loading');
         break;
       case PermissionStatus.undetermined:
       case PermissionStatus.denied:
