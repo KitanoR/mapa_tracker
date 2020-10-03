@@ -59,10 +59,8 @@ class _LoadingPageState extends State<LoadingPage> with WidgetsBindingObserver {
     final gpsActivo = await Geolocator.isLocationServiceEnabled();
 
     //TODO: ver si el gps est[a activo]
-    print(permisoGps);
-    print(gpsActivo);
+  
     if (permisoGps && gpsActivo) {
-      print('Debe ir a el mapa');
       Navigator.pushReplacement(context, navegarMapaFadeIn(context, MapaPage()));
       return '';
     } else if (!permisoGps) {
