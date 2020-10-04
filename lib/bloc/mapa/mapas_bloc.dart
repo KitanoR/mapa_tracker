@@ -19,7 +19,7 @@ class MapasBloc extends Bloc<MapasEvent, MapasState> {
   Polyline _miRuta = new Polyline(
     polylineId: PolylineId('mi_ruta'),
     width: 4,
-    color: Colors.black87
+    color: Colors.transparent
   );
 
   void initMapa(GoogleMapController controller) {
