@@ -16,3 +16,10 @@ class OnNuevaUbicacion extends MapasEvent {
 }
 
 class OnMarcarRecorrido extends MapasEvent {}
+class OnSeguirUbicacion extends MapasEvent {}
+
+
+class OnMovioMapa extends MapasEvent {
+  final LatLng centroMapa;
+  OnMovioMapa(this.centroMapa);
+}

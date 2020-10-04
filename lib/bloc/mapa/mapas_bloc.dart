@@ -42,16 +42,19 @@ class MapasBloc extends Bloc<MapasEvent, MapasState> {
     if ( event is onMapaListo ){
       yield state.copyWith(mapaListo: true);
     } else if ( event is OnNuevaUbicacion ) {
-      List<LatLng> points = [
-        ...this._miRuta.points,
-        event.ubicacion
-      ];
-      this._miRuta = this._miRuta.copyWith( pointsParam: points );
-      final currentPolylines = state.polylines;
-      currentPolylines['mi_ruta'] = this._miRuta;
-      yield state.copyWith(polylines: currentPolylines);
+      yield* _onNuevaUbicacion(event);
     } else if( event is OnMarcarRecorrido) {
-      if (!state.dibujarRecorrido) {
+      yield* _onMarcarRecorrido(event);
+    } else if ( event is OnSeguirUbicacion ) {
+      yield* _onSeguirUbicacion(event);
+    } else if ( event is OnMovioMapa) {
+      print(event.centroMapa);
+      yield state.copyWith(ubicacionCentral: event.centroMapa);
+    }
+  }
+
+  Stream<MapasState> _onMarcarRecorrido(OnMarcarRecorrido event) async * {
+    if (!state.dibujarRecorrido) {
         this._miRuta = this._miRuta.copyWith(colorParam: Colors.black87);
       } else {
         this._miRuta = this._miRuta.copyWith(colorParam: Colors.transparent);
@@ -63,6 +66,26 @@ class MapasBloc extends Bloc<MapasEvent, MapasState> {
         dibujarRecorrido: !state.dibujarRecorrido,
         polylines: currentPolylines
       );
+  }
+
+  Stream<MapasState> _onNuevaUbicacion(OnNuevaUbicacion event) async* {
+      if (state.seguirUbicacion) {
+        this.moverCamara(event.ubicacion);
+      }
+      List<LatLng> points = [
+        ...this._miRuta.points,
+        event.ubicacion
+      ];
+      this._miRuta = this._miRuta.copyWith( pointsParam: points );
+      final currentPolylines = state.polylines;
+      currentPolylines['mi_ruta'] = this._miRuta;
+      yield state.copyWith(polylines: currentPolylines);
+  }
+
+  Stream<MapasState> _onSeguirUbicacion( OnSeguirUbicacion event) async* {
+    if (!state.seguirUbicacion){
+      this.moverCamara(this._miRuta.points.last);
     }
+    yield state.copyWith( seguirUbicacion: !state.seguirUbicacion );
   }
 }

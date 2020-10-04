@@ -37,6 +37,7 @@ class _MapaPageState extends State<MapaPage> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
           BtnUbicacion(),
+          BtnSeguirUbicacion(),
           BtnMiRuta()
         ],
       ),
@@ -59,6 +60,12 @@ class _MapaPageState extends State<MapaPage> {
       zoomControlsEnabled: false,
       onMapCreated: mapaBloc.initMapa,
       polylines: mapaBloc.state.polylines.values.toSet(),
+      onCameraMove: (camaraPosition) {
+        mapaBloc.add(OnMovioMapa(camaraPosition.target));
+      },
+      onCameraIdle: () {
+        // cuando se termina de arrastrar el mapa
+      },
     );
   }
 }
