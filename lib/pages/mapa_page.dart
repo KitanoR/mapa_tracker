@@ -59,20 +59,25 @@ class _MapaPageState extends State<MapaPage> {
       target: state.ubicacion,
       zoom: 15
     );
-    // return Text('hola mndo');
-    return GoogleMap(
-      initialCameraPosition: camaraPosition,
-      myLocationEnabled: true,
-      myLocationButtonEnabled: false,
-      zoomControlsEnabled: false,
-      onMapCreated: mapaBloc.initMapa,
-      polylines: mapaBloc.state.polylines.values.toSet(),
-      onCameraMove: (camaraPosition) {
-        mapaBloc.add(OnMovioMapa(camaraPosition.target));
-      },
-      onCameraIdle: () {
-        // cuando se termina de arrastrar el mapa
-      },
+    return BlocBuilder<MapasBloc, MapasState>(
+      builder: (context, _) { 
+        return GoogleMap(
+          initialCameraPosition: camaraPosition,
+          myLocationEnabled: true,
+          myLocationButtonEnabled: false,
+          zoomControlsEnabled: false,
+          onMapCreated: mapaBloc.initMapa,
+          polylines: mapaBloc.state.polylines.values.toSet(),
+          onCameraMove: (camaraPosition) {
+            mapaBloc.add(OnMovioMapa(camaraPosition.target));
+          },
+          onCameraIdle: () {
+            // cuando se termina de arrastrar el mapa
+          },
+        );
+       }, 
     );
+    // return Text('hola mndo');
+    
   }
 }
