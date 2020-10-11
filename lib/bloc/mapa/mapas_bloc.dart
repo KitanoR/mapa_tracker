@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:flutter/material.dart' show Colors;
+import 'package:flutter/material.dart' show Colors, Offset;
 
 import 'package:bloc/bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:mapa_tracker/helpers/helpers.dart';
 import 'package:mapa_tracker/theme/uber_mapa_theme.dart';
 import 'package:meta/meta.dart';
 
@@ -67,8 +68,46 @@ class MapasBloc extends Bloc<MapasEvent, MapasState> {
     );
     final currentPolylines = state.polylines;
     currentPolylines['mi_ruta_destino'] = this._miRutaDestino;
+
+    // icono inicio
+    // final iconInicio = await getAssetImageMarker();
+    final iconInicio = await getMarkerInicioIcon(event.duracion.toInt());
+    // final iconoDestino = await getNetworkImageMarker();
+    final iconoDestino = await getMarkerDestinoIcon(event.distancia, event.nombreDestino);
+
+
+
+
+    // marcadores
+    final markerInicio = new Marker(
+      icon: iconInicio,
+      markerId: MarkerId('inicio'),
+      position: event.rutaCoordenadas[0],
+      anchor: Offset(0.0, 1.0),
+      infoWindow: InfoWindow(
+        title: "Mi ubicación",
+        snippet: "Duracion recorrido: ${(event.duracion / 60).floor()} mins",
+        anchor: Offset(0.1, 0.0)
+      )
+    );
+    final markerFinal = new Marker(
+      icon: iconoDestino,
+      anchor: Offset(0.0, 1.0),
+      markerId: MarkerId('destino'),
+      position: event.rutaCoordenadas.last,
+      
+    );
+    final newMarkers = { ...state.markers };
+    newMarkers['inicio'] = markerInicio;
+    newMarkers['destino'] = markerFinal;
+    // Future.delayed(Duration(milliseconds: 200)).then((value) {
+    //   _mapController.showMarkerInfoWindow(MarkerId('inicio'));
+    //   _mapController.showMarkerInfoWindow(MarkerId('destino'));
+
+    // });
     yield state.copyWith(
-      polylines: currentPolylines
+      polylines: currentPolylines,
+      markers: newMarkers,
     );
   }
   Stream<MapasState> _onMarcarRecorrido(OnMarcarRecorrido event) async * {
